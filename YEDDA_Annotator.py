@@ -27,7 +27,7 @@ import tkMessageBox
 class Example(Frame):
     def __init__(self, parent):
         Frame.__init__(self, parent)
-        self.Version = "YEDDA-V1.1 Annotator"
+        self.Version = ""
         self.OS = platform.system().lower()
         self.parent = parent
         self.fileName = ""
@@ -123,7 +123,9 @@ class Example(Frame):
             })
 
             self.crt_remark_orig = self.flags[self.crt_1_class][self.crt_2_class][self.crt_3_class]
-            self.crt_remark = ['小类名称',] + self.crt_remark_orig + ['添加']
+            if self.crt_remark_orig is None:
+                self.crt_remark_orig = []
+            self.crt_remark = self.crt_remark_orig + ['添加', ]
         else:
             print "未找到标记文件"
             return
@@ -182,14 +184,25 @@ class Example(Frame):
         self.sb['command'] = self.text.yview
         # self.sb.pack()
 
-        abtn = Button(self, text="打开文件", command=self.onOpen)
-        abtn.grid(row=0, column=self.textColumn + 1)
+        self.ctrl_group = LabelFrame(self)
+        
+        # self.combox_group.config(borderwidth=10, background='red')
+        self.ctrl_group.grid(row=1, column=self.textColumn + 1,
+                             columnspan=2, 
+                             rowspan=2,
+                             # sticky=E + W + S + N,
+                             padx=5,
+                            #  ipadx=20,
+                       )
+
+        abtn = Button(self.ctrl_group, text="打开文件", command=self.onOpen)
+        abtn.grid(row=0, column=0)
 
         style = ttk.Style()
         style.configure("C.TButton", foreground="#32cd32")
-        self.recButton = Button(self, text="自动同步", style="C.TButton", command=self.setInRecommendModel)
+        self.recButton = Button(self.ctrl_group, text="自动同步", style="C.TButton", command=self.setInRecommendModel)
         # recButton.config(style="C.TButton")
-        self.recButton.grid(row=0, column=self.textColumn + 2, sticky=W)
+        self.recButton.grid(row=0, column=1)
 
         # noRecButton = Button(
         #     self, text="退出同步", command=self.setInNotRecommendModel)
@@ -199,21 +212,37 @@ class Example(Frame):
         # ubtn.grid(row=1, column=self.textColumn + 1)
 
         exportbtn = Button(
-            self, text="输出结果", command=self.generateSequenceFile)
-        exportbtn.grid(row=1, column=self.textColumn + 1, sticky=N)
+             self.ctrl_group, text="输出结果", command=self.generateSequenceFile)
+        exportbtn.grid(row=1, column=0)
 
-        cbtn = Button(self, text="退出", command=self.quit)
-        cbtn.grid(row=1, column=self.textColumn + 2, sticky=W+N)
+        cbtn = Button(self.ctrl_group, text="退出", command=self.quit)
+        cbtn.grid(row=1, column=1)
 
-        combox_row = 2
-        combox_col = self.textColumn + 1
+        style = ttk.Style()
+        style.configure("C.TLabelframe", 
+                         background='red',
+                         borderwidth=0, bordercolor='#00FF00')
+
+        self.combox_group = LabelFrame(self)
+        
+        # self.combox_group.config(borderwidth=10, background='red')
+        self.combox_group.grid(row=3, column=self.textColumn + 1,
+                               columnspan=2,
+                               rowspan=3
+                               # sticky=E + W + S + N,
+                            #    padx=5
+                       )
+        # self.combox_group.config(style="C.TLabelframe")
+
+        combox_row = 0
+        combox_col = 0
         self.class_handler = []
         for i in self.combox_lst:
-            first_calss_label = Label(self, text=i.get("text"))
+            first_calss_label = Label(self.combox_group, text=i.get("text"))
             first_calss_label.grid(row=combox_row, column=combox_col,
                                    sticky=E )
             
-            first_class = Combobox(self, textvariable=i.get("options"))
+            first_class = Combobox(self.combox_group, textvariable=i.get("options"), width=10, state='readonly')
             first_class['values'] = i.get("lst")
             first_class.current(0)
             first_class.grid(row=combox_row, column=combox_col + 1,
@@ -228,7 +257,7 @@ class Example(Frame):
         style = ttk.Style()
         style.configure("Black.TLabelframe", font=("黑体", 100, 'bolder'))
         self.btn_group = LabelFrame(self, text="特征量", style="Black.TLabelframe")
-        self.btn_group.grid(row=5, column=self.textColumn + 1,
+        self.btn_group.grid(row=6, column=self.textColumn + 1,
                        columnspan=2, sticky='W'
                        )
         
@@ -428,7 +457,9 @@ class Example(Frame):
 
     def _update_remark(self):
         self.crt_remark_orig = self.flags[self.combox_lst[0]['cur']][self.combox_lst[1]['cur']][self.combox_lst[2]['cur']]
-        self.crt_remark = ['小类名称',] + self.crt_remark_orig + ['添加']
+        if self.crt_remark_orig is None:
+            self.crt_remark_orig = []
+        self.crt_remark = self.crt_remark_orig + ['添加',]
         col = row = 0
         for k,v in self.btn_group.children.items():
             v.destroy()
@@ -913,11 +944,12 @@ class Example(Frame):
     
         if len(self.crt_selected_area) > 0:
             self.text.tag_configure("green", background=self.remarkColor)
+            self.text.tag_configure("yellow", background="yellow")
             self.text.tag_add("green", self.crt_selected_area[-1]['master'][0], self.crt_selected_area[-1]['master'][1])
             keyword = self.crt_selected_area[-1]['keyword']
             recommend_pos_lst = self.findAllRecommed(keyword, content)
             for i in recommend_pos_lst:
-                self.text.tag_add("green", i[0], i[1])
+                self.text.tag_add("yellow", i[0], i[1])
 
 
     def setColorDisplay(self, use_last_color=1):
