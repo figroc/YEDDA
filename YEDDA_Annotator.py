@@ -189,9 +189,9 @@ class Example(Frame):
         # self.combox_group.config(borderwidth=10, background='red')
         self.ctrl_group.grid(row=1, column=self.textColumn + 1,
                              columnspan=2, 
-                             rowspan=2,
+                             rowspan=3,
                              # sticky=E + W + S + N,
-                             padx=5,
+                             pady=0,
                             #  ipadx=20,
                        )
 
@@ -226,11 +226,11 @@ class Example(Frame):
         self.combox_group = LabelFrame(self)
         
         # self.combox_group.config(borderwidth=10, background='red')
-        self.combox_group.grid(row=3, column=self.textColumn + 1,
+        self.combox_group.grid(row=4, column=self.textColumn + 1,
                                columnspan=2,
-                               rowspan=3
+                               rowspan=4,
                                # sticky=E + W + S + N,
-                            #    padx=5
+                               pady=10
                        )
         # self.combox_group.config(style="C.TLabelframe")
 
@@ -242,7 +242,7 @@ class Example(Frame):
             first_calss_label.grid(row=combox_row, column=combox_col,
                                    sticky=E )
             
-            first_class = Combobox(self.combox_group, textvariable=i.get("options"), width=10, state='readonly')
+            first_class = Combobox(self.combox_group, textvariable=i.get("options"), width=15, state='readonly')
             first_class['values'] = i.get("lst")
             first_class.current(0)
             first_class.grid(row=combox_row, column=combox_col + 1,
@@ -257,7 +257,7 @@ class Example(Frame):
         style = ttk.Style()
         style.configure("Black.TLabelframe", font=("黑体", 100, 'bolder'))
         self.btn_group = LabelFrame(self, text="特征量", style="Black.TLabelframe")
-        self.btn_group.grid(row=6, column=self.textColumn + 1,
+        self.btn_group.grid(row=8, column=self.textColumn + 1,
                        columnspan=2, sticky='W'
                        )
         
