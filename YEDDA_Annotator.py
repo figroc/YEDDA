@@ -506,7 +506,7 @@ class Example(Frame):
                 self.push_his()
                 self.executeCursorCommand('a')
                 self.setCurColor()
-            # self.sb.set(*old_pos)
+            self.sb.set(*old_pos)
             print("after:", self.sb.get())
                 
         except Exception as e:
@@ -639,7 +639,10 @@ class Example(Frame):
         """
             保存历史
         """
-        self.remarkHistory.append(self.getText())
+        self.remarkHistory.append({
+                "txt": self.getText(),
+                "sb_pos": self.sb.get(),
+                "cursor": self.text.index(INSERT)})
         # print(self.getText())
     
     def pop_his(self, e):
@@ -647,17 +650,25 @@ class Example(Frame):
             撤回操作
         """
         if len(self.remarkHistory):
-            text = self.remarkHistory.pop()
+            history = self.remarkHistory.pop()
+            text = history["txt"]
+            cursor_index = history["cursor"]
+            sb_pos = history["sb_pos"]
+
             # print(text)
             self.text.delete("1.0", END)
             self.text.insert("end-1c", text)
-            # self.text.mark_set(INSERT, newcursor_index)
-            # self.text.see(newcursor_index)
-            # self.setCursorLabel(newcursor_index)
+            self.text.mark_set(INSERT, cursor_index)
+            self.sb.set(*sb_pos)
+            
+            self.text.see(cursor_index)
+            self.setCursorLabel(cursor_index)
+
             if len(self.crt_selected_area):
                 self.crt_selected_area.pop()
             self.setColorDisplay()
             self.setCurColor()
+            
 
     def backToHistory(self, event):
         if self.debug:
@@ -896,7 +907,8 @@ class Example(Frame):
                 ann_file.write(content)
                 ann_file.close()
             # print "Writed to new file: ", new_name
-            self.autoLoadNewFile(new_name, newcursor_index)
+            # self.autoLoadNewFile(new_name, newcursor_index)
+            self.readStatus(content, newcursor_index)
             # self.generateSequenceFile()
         else:
             print "Don't write to empty file!"
@@ -920,11 +932,18 @@ class Example(Frame):
             text = self.readFile(fileName)
             self.text.insert("end-1c", text)
             self.setNameLabel("File: " + fileName)
-            # self.text.mark_set(INSERT, newcursor_index)
+            self.text.mark_set(INSERT, newcursor_index)
             self.text.see(newcursor_index)
             self.setCursorLabel(newcursor_index)
             self.setColorDisplay()
-            
+
+    def readStatus(self, content, newcursor_index):
+        self.text.delete("1.0", END)
+        self.text.insert("end-1c", content)
+        self.text.mark_set(INSERT, newcursor_index)
+        self.text.see(newcursor_index)
+        self.setCursorLabel(newcursor_index)
+        self.setColorDisplay()
 
     def setCurColor(self):
         """
