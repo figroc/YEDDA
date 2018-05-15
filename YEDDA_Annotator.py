@@ -496,14 +496,22 @@ class Example(Frame):
         cursor_text = ("row: %s col: %s" % (row_column[0], row_column[-1]))
         self.cursorIndex.config(text=cursor_text)
 
+        
         try:
+            old_pos = self.sb.get()
+            print("before:", self.sb.get())
             selected_txt = self.text.selection_get()
-            self.selected_txt = selected_txt
-            self.push_his()
-            self.executeCursorCommand('a')
-            self.setCurColor()
-            
+            if selected_txt:
+                self.selected_txt = selected_txt
+                self.push_his()
+                self.executeCursorCommand('a')
+                self.setCurColor()
+            # self.sb.set(*old_pos)
+            print("after:", self.sb.get())
+                
         except Exception as e:
+            #self.text.mark_set("insert","15.10")
+            # print(self.sb.get())
             pass
         
 
@@ -912,7 +920,7 @@ class Example(Frame):
             text = self.readFile(fileName)
             self.text.insert("end-1c", text)
             self.setNameLabel("File: " + fileName)
-            self.text.mark_set(INSERT, newcursor_index)
+            # self.text.mark_set(INSERT, newcursor_index)
             self.text.see(newcursor_index)
             self.setCursorLabel(newcursor_index)
             self.setColorDisplay()
