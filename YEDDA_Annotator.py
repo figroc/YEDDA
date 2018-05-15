@@ -33,7 +33,7 @@ class Example(Frame):
         self.fileName = ""
         self.debug = True
         self.colorAllChunk = True
-        self.recommendFlag = True
+        self.recommendFlag = False
         self.history = deque(maxlen=20)
         self.remarkHistory = deque()
         self.currentContent = deque(maxlen=1)
@@ -199,7 +199,7 @@ class Example(Frame):
         abtn.grid(row=0, column=0)
 
         style = ttk.Style()
-        style.configure("C.TButton", foreground="#32cd32")
+        style.configure("C.TButton", foreground="red")
         self.recButton = Button(self.ctrl_group, text="自动同步", style="C.TButton", command=self.setInRecommendModel)
         # recButton.config(style="C.TButton")
         self.recButton.grid(row=0, column=1)
@@ -364,12 +364,19 @@ class Example(Frame):
             popup_frame = Frame(self.popup_widget)
             popup_frame.pack(fill=BOTH, expand=True)
             popup_widget = self.popup_widget
-            popup_widget.geometry("+200+200")
-            Label(popup_frame, text="输入特征量名称").grid(row=0, column=0)
+            popup_widget.geometry("+650+350")
+            Label(popup_frame, text="输入特征量名称").grid(row=0, column=0, pady=15)
             self.add_input = Entry(popup_frame)
-            self.add_input.grid(row=0, column=1)
-            Button(popup_frame, text="提交", command=self.get_input).grid(row=1, column=1, sticky=E + W + S + N)
-            Button(popup_frame, text="取消", command=self.cancel_popup).grid(row=1, column=0, sticky=E + W + S + N)
+            self.add_input.grid(row=0, column=1, pady=15)
+            
+            btn_g = LabelFrame(popup_frame)
+            btn_g.grid(row=1, column=0, columnspan=2, rowspan=2)
+
+            Button(btn_g, text="提交", command=self.get_input).grid(row=2,
+                                                                         column=0,
+                                                                        #  pady=20,
+                                                                         sticky=E + W + S + N)
+            Button(btn_g, text="取消", command=self.cancel_popup).grid(row=2, column=1, sticky=E + W + S + N)
             #self.popup_widget.quit = self.cancel_popup
         
 
