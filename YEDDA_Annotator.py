@@ -358,7 +358,7 @@ class Example(Frame):
         #     self.popup_widget.destroy()
         #     self.popup_widget = Tk()
         # else:
-        if not self.popup_widget:
+        if self.popup_widget is None or not self.popup_widget.children:
             self.popup_widget = Tk()
             self.popup_widget.title("新建特征量")
             popup_frame = Frame(self.popup_widget)
@@ -370,6 +370,7 @@ class Example(Frame):
             self.add_input.grid(row=0, column=1)
             Button(popup_frame, text="提交", command=self.get_input).grid(row=1, column=1, sticky=E + W + S + N)
             Button(popup_frame, text="取消", command=self.cancel_popup).grid(row=1, column=0, sticky=E + W + S + N)
+            #self.popup_widget.quit = self.cancel_popup
         
 
     def cancel_popup(self):
@@ -377,6 +378,7 @@ class Example(Frame):
             弹出框取消操作
         """
         self.popup_widget.destroy()
+        #self.popup_widget.quit()
         self.popup_widget = None
 
     
