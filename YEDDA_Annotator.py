@@ -264,15 +264,24 @@ class Example(Frame):
         col = row = 0
         for i in self.crt_remark:
             # Button(self.btn_group, text=i, command=self.set_cur_mark).grid(column=col%3, row=row)
+            
             btn = Button(self.btn_group, text=i)
             if i == "添加":
                 btn.bind('<Button-1>', self.popup)
             else:
                 btn.bind('<Button-1>', self.set_cur_mark)
-            btn.grid(column=col%3, row=row)
-            col += 1
-            if col and col%3 == 0:
-                row += 1
+            
+            if col == 0 and row == 0:
+                btn.grid(column=0, row=0, 
+                         columnspan=3,
+                        sticky=W+N+S+E)
+                row = 1
+                continue
+            else:
+                btn.grid(column = col%3, row=row)
+                col += 1
+                if col and col%3 == 0:
+                    row += 1
         
         #self.btn_group.children[-1].bind('<Button-1>', self.popup)
 
@@ -478,10 +487,18 @@ class Example(Frame):
                 btn.bind('<Button-1>', self.popup)
             else:
                 btn.bind('<Button-1>', self.set_cur_mark)
-            btn.grid(column=col%3, row=row)
-            col += 1
-            if col and col%3 == 0:
-                row += 1
+            if col == 0 and row == 0:
+                btn.grid(column=0, row=0, 
+                         columnspan=3,
+                        sticky=W+N+S+E)
+                row = 1
+                continue
+            else:
+                btn.grid(column = col%3, row=row)
+                col += 1
+                if col and col%3 == 0:
+                    row += 1
+        
 
     def set_cur_mark(self, event):
         """
