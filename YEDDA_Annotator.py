@@ -533,10 +533,10 @@ class Example(Frame):
             设置当前标记
         """
         green_style = ttk.Style()
-        green_style.configure("G.TButton", foreground="#32cd32")
-        black_style = ttk.Style().configure("B.TButton", foreground="black")
+        green_style.configure("G.TButton", foreground="#32cd32",font=(self.lbFontStyle, self.fontSize))
+        black_style = ttk.Style().configure("B.TButton", foreground="black", font=(self.lbFontStyle, self.fontSize))
         for k,v in self.btn_group.children.items():
-            v.config(style='')
+            v.config(style='B.TButton')
         event.widget.config(style='G.TButton')
         curt_data = event.widget['text']
         self.crt_mark = curt_data
