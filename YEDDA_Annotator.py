@@ -80,7 +80,9 @@ class Example(Frame):
             with codecs.open(self.remark_file, "r", encoding="utf-8") as fd:
                 self.flags = yaml.load(fd)
 
-            self.crt_1_lst = self.flags.keys()
+            keys = self.flags.keys()
+            keys.sort()
+            self.crt_1_lst = keys
             self.crt_1_class = self.crt_1_lst[0]
             first_class_options = StringVar()
             first_class_options.set(tuple(self.crt_1_lst))
@@ -94,7 +96,9 @@ class Example(Frame):
                 "options": self.first_class_options  # 当前控件用数据源
             })
             
-            self.crt_2_lst = self.flags[self.crt_1_class].keys()
+            keys = self.flags[self.crt_1_class].keys()
+            keys.sort()
+            self.crt_2_lst = keys
             self.crt_2_class = self.crt_2_lst[0]
             second_class_options = StringVar()
             second_class_options.set(tuple(self.crt_2_lst))
@@ -108,7 +112,9 @@ class Example(Frame):
                 "options": self.second_class_options  # 当前控件用数据源
             })
 
-            self.crt_3_lst = self.flags[self.crt_1_class][self.crt_2_class].keys()
+            keys = self.flags[self.crt_1_class][self.crt_2_class].keys()
+            keys.sort()
+            self.crt_3_lst = keys
             self.crt_3_class = self.crt_3_lst[0]
             third_class_options = StringVar()
             third_class_options.set(tuple(self.crt_3_lst))
@@ -141,6 +147,8 @@ class Example(Frame):
         self.remarkColor = 'lightgreen'
         self.selectColor = 'light salmon'
         self.textFontStyle = "Times"
+        self.lbFontStyle = "黑体"
+        self.fontSize = 16
         self.initUI()
 
     def initUI(self):
@@ -163,6 +171,8 @@ class Example(Frame):
             size=self.textRow,
             weight="bold",
             underline=0)
+        s = ttk.Style()
+        s.configure('my.TButton', font=(self.lbFontStyle, self.fontSize, ))
         self.text = Text(
             self, font=self.fnt, selectbackground=self.selectColor)
         self.text.grid(
@@ -195,11 +205,11 @@ class Example(Frame):
                             #  ipadx=20,
                        )
 
-        abtn = Button(self.ctrl_group, text="打开文件", command=self.onOpen)
+        abtn = Button(self.ctrl_group, text="打开文件", command=self.onOpen, style="my.TButton")
         abtn.grid(row=0, column=0)
 
         style = ttk.Style()
-        style.configure("C.TButton", foreground="red")
+        style.configure("C.TButton", foreground="red", font=(self.lbFontStyle, self.fontSize, ))
         self.recButton = Button(self.ctrl_group, text="自动同步", style="C.TButton", command=self.setInRecommendModel)
         # recButton.config(style="C.TButton")
         self.recButton.grid(row=0, column=1)
@@ -212,16 +222,17 @@ class Example(Frame):
         # ubtn.grid(row=1, column=self.textColumn + 1)
 
         exportbtn = Button(
-             self.ctrl_group, text="输出结果", command=self.generateSequenceFile)
+             self.ctrl_group, text="输出结果",style="my.TButton", command=self.generateSequenceFile)
         exportbtn.grid(row=1, column=0)
 
-        cbtn = Button(self.ctrl_group, text="退出", command=self.quit)
+        cbtn = Button(self.ctrl_group, text="退出", style="my.TButton", command=self.quit)
         cbtn.grid(row=1, column=1)
 
         style = ttk.Style()
         style.configure("C.TLabelframe", 
                          background='red',
-                         borderwidth=0, bordercolor='#00FF00')
+                         borderwidth=0, bordercolor='#00FF00',
+                         )
 
         self.combox_group = LabelFrame(self)
         
@@ -234,15 +245,25 @@ class Example(Frame):
                        )
         # self.combox_group.config(style="C.TLabelframe")
 
+        style = ttk.Style()
+        style.configure("C.TLabel", 
+                         font=(self.lbFontStyle, self.fontSize, )
+                         )
+        # style2 = ttk.Style()
+        # style2.map("C.TCombobox", 
+        #                  font=(self.lbFontStyle, 40, )
+        #                  )
+
         combox_row = 0
         combox_col = 0
         self.class_handler = []
         for i in self.combox_lst:
-            first_calss_label = Label(self.combox_group, text=i.get("text"))
+            first_calss_label = Label(self.combox_group, text=i.get("text"), style="C.TLabel")
             first_calss_label.grid(row=combox_row, column=combox_col,
                                    sticky=E )
             
-            first_class = Combobox(self.combox_group, textvariable=i.get("options"), width=15, state='readonly')
+            first_class = Combobox(self.combox_group, textvariable=i.get("options"), width=24, state='readonly')
+            
             first_class['values'] = i.get("lst")
             first_class.current(0)
             first_class.grid(row=combox_row, column=combox_col + 1,
@@ -265,7 +286,7 @@ class Example(Frame):
         for i in self.crt_remark:
             # Button(self.btn_group, text=i, command=self.set_cur_mark).grid(column=col%3, row=row)
             
-            btn = Button(self.btn_group, text=i)
+            btn = Button(self.btn_group, text=i, style="my.TButton")
             if i == "添加":
                 btn.bind('<Button-1>', self.popup)
             else:
@@ -295,7 +316,7 @@ class Example(Frame):
             self,
             text=("row: %s col: %s" % (0, 0)),
             foreground="red",
-            font=(self.textFontStyle, 12))
+            font=(self.textFontStyle, self.fontSize))
         self.cursorIndex.grid(row=self.textRow + 1, column=self.textColumn + 2, pady=4)
 
         # self.RecommendModelName = Label(
@@ -322,7 +343,7 @@ class Example(Frame):
         # # b.grid(row =1 , column = 3)
         # b.pack(side='left')
 
-        lbl_entry = Label(self, text="Command:")
+        lbl_entry = Label(self, text="Command:", style="C.TLabel")
         lbl_entry.grid(
             row=self.textRow + 1, sticky=E + W + S + N, pady=4, padx=4)
         self.entry = Entry(self)
@@ -359,7 +380,7 @@ class Example(Frame):
 
         # self.setMapShow()
 
-        self.enter = Button(self, text="Enter", command=self.returnButton)
+        self.enter = Button(self, text="Enter", command=self.returnButton, style="my.TButton")
         self.enter.grid(row=self.textRow + 1, column=self.textColumn + 1)
 
     def popup(self, event):
@@ -369,11 +390,12 @@ class Example(Frame):
         # else:
         if self.popup_widget is None or not self.popup_widget.children:
             self.popup_widget = Tk()
-            self.popup_widget.title("新建特征量")
+            self.popup_widget.title("")
             popup_frame = Frame(self.popup_widget)
             popup_frame.pack(fill=BOTH, expand=True)
             popup_widget = self.popup_widget
             popup_widget.geometry("+650+350")
+            popup_widget.iconbitmap('icon.ico')
             Label(popup_frame, text="输入特征量名称").grid(row=0, column=0, pady=15)
             self.add_input = Entry(popup_frame)
             self.add_input.grid(row=0, column=1, pady=15)
@@ -381,11 +403,11 @@ class Example(Frame):
             btn_g = LabelFrame(popup_frame)
             btn_g.grid(row=1, column=0, columnspan=2, rowspan=2)
 
-            Button(btn_g, text="提交", command=self.get_input).grid(row=2,
+            Button(btn_g, text="提交", command=self.get_input, style="my.TButton").grid(row=2,
                                                                          column=0,
                                                                         #  pady=20,
                                                                          sticky=E + W + S + N)
-            Button(btn_g, text="取消", command=self.cancel_popup).grid(row=2, column=1, sticky=E + W + S + N)
+            Button(btn_g, text="取消", command=self.cancel_popup, style="my.TButton").grid(row=2, column=1, sticky=E + W + S + N)
             #self.popup_widget.quit = self.cancel_popup
         
 
@@ -452,20 +474,26 @@ class Example(Frame):
         
         self.combox_lst[idx]['cur'] = key_name
         if idx == 0:
-            self.combox_lst[1]['lst'] = self.flags[key_name].keys()
-            self.combox_lst[1]['cur'] = self.flags[key_name].keys()[0]
+            keys = self.flags[key_name].keys()
+            keys.sort()
+            self.combox_lst[1]['lst'] = keys
+            self.combox_lst[1]['cur'] = keys[0]
             self.combox_lst[1]['options'].set(tuple(self.combox_lst[1]['lst']))
             self.combox_lst[1]['handler']['values'] = self.combox_lst[1]['lst']
             self.combox_lst[1]['handler'].current(0)
 
-            self.combox_lst[2]['lst'] = self.flags[key_name][self.combox_lst[1]['cur']].keys()
-            self.combox_lst[2]['cur'] = self.flags[key_name][self.combox_lst[1]['cur']].keys()[0]
+            keys = self.flags[key_name][self.combox_lst[1]['cur']].keys()
+            keys.sort()
+            self.combox_lst[2]['lst'] = keys
+            self.combox_lst[2]['cur'] = keys[0]
             self.combox_lst[2]['options'].set(tuple(self.combox_lst[2]['lst']))
             self.combox_lst[2]['handler']['values'] = self.combox_lst[2]['lst']
             self.combox_lst[2]['handler'].current(0)
         elif idx == 1:
-            self.combox_lst[2]['lst'] = self.flags[self.combox_lst[0]['cur']][key_name].keys()
-            self.combox_lst[2]['cur'] = self.flags[self.combox_lst[0]['cur']][key_name].keys()[0]
+            keys = self.flags[self.combox_lst[0]['cur']][key_name].keys()
+            keys.sort()
+            self.combox_lst[2]['lst'] = keys
+            self.combox_lst[2]['cur'] = keys[0]
             self.combox_lst[2]['options'].set(tuple(self.combox_lst[2]['lst']))
             self.combox_lst[2]['handler']['values'] = self.combox_lst[2]['lst']
             self.combox_lst[2]['handler'].current(0)
@@ -482,7 +510,7 @@ class Example(Frame):
         for k,v in self.btn_group.children.items():
             v.destroy()
         for i in self.crt_remark:
-            btn = Button(self.btn_group, text=i)
+            btn = Button(self.btn_group, text=i, style="my.TButton")
             if i == "添加":
                 btn.bind('<Button-1>', self.popup)
             else:
@@ -1419,8 +1447,9 @@ def main():
     print(("OS:%s") % (platform.system()))
     root = Tk()
     root.geometry("1300x700+200+200")
+    root.iconbitmap('icon.ico')
     app = Example(root)
-    app.setFont(17)
+    app.setFont(50)
     root.mainloop()
 
 

@@ -74,6 +74,7 @@ If you use YEDDA for research, please cite this report as follows:
      year={2018}  
     } 
 
+> 打包window exe命令 pyinstaller ./YEDDA.Annotator.py
 
 Updating...
 ====
